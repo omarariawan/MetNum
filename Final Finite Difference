@@ -1,0 +1,52 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the dataset
+df = pd.read_csv('Documents/Base.csv')
+print(df.columns)  # Check column names
+
+# Use two numeric columns for x and y (e.g. customer_age and intended_balcon_amount)
+df = df.sort_values(by='customer_age').reset_index(drop=True)
+x = df['customer_age'].astype(float).values
+y = df['intended_balcon_amount'].astype(float).values
+n = len(x)
+
+# Initialize derivative arrays
+dy_dx = np.zeros(n)
+d2y_dx2 = np.zeros(n)
+
+# First derivative using central difference
+for i in range(1, n-1):
+    dy_dx[i] = (y[i+1] - y[i-1]) / (x[i+1] - x[i-1])
+
+# Forward and backward for endpoints
+dy_dx[0] = (y[1] - y[0]) / (x[1] - x[0])
+dy_dx[-1] = (y[-1] - y[-2]) / (x[-1] - x[-2])
+
+# Second derivative using central difference
+for i in range(1, n-1):
+    h = x[i+1] - x[i]  # spacing
+    d2y_dx2[i] = (y[i+1] - 2*y[i] + y[i-1]) / h**2
+
+# Store results in dataframe
+df['dy_dx'] = dy_dx
+df['d2y_dx2'] = d2y_dx2
+
+# Display results
+print(df.head())
+
+import matplotlib as mpl
+
+mpl.rcParams['agg.path.chunksize'] = 10000
+
+# Plotting
+plt.plot(x, y, label='Original y(x)')
+plt.plot(x, dy_dx, label="First Derivative", linestyle='--')
+plt.plot(x, d2y_dx2, label="Second Derivative", linestyle=':')
+plt.xlabel('customer_age')
+plt.ylabel('intended_balcon_amount')
+plt.title('Finite Difference Derivatives')
+plt.legend()
+plt.grid(True)
+plt.show()
