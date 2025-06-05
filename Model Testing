@@ -1,0 +1,16 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+# Load fraud dataset (assumes you have this file)
+df_fraud = pd.read_csv('Documents/Base.csv')
+print(df_fraud.columns)
+
+# Select features and target
+X = df_fraud.loc[:, 'income':'month']
+y = df_fraud['fraud_bool']
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, train_size=0.7, random_state=0)
+
+print(X_train.head())
+print(y_train.head())
